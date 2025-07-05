@@ -1,60 +1,58 @@
-const Progress = ({ value = 0, variant = 'linear', size = 30 }) => {
-  const { currentTheme } = useContext(ThemeContext);
-  const theme = themeConfigs[currentTheme];
-  
+import React from 'react';
+import { LinearProgress, CircularProgress, Box } from '@mui/material';
+
+const Progress = ({ 
+  value = 0, 
+  variant = 'linear', 
+  size = 40,
+  determinate = true,
+  sx = {},
+  ...props 
+}) => {
   if (variant === 'circular') {
-    const radius = size / 2 - 4;
-    const circumference = 2 * Math.PI * radius;
-    const strokeDasharray = circumference;
-    const strokeDashoffset = circumference - (value / 100) * circumference;
-    
     return (
-      <div style={{ display: 'inline-block' }}>
-        <svg width={size} height={size}>
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            fill="none"
-            stroke="#e0e0e0"
-            strokeWidth="4"
-          />
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            fill="none"
-            stroke={theme.primary}
-            strokeWidth="4"
-            strokeDasharray={strokeDasharray}
-            strokeDashoffset={strokeDashoffset}
-            strokeLinecap="round"
-            transform={`rotate(-90 ${size / 2} ${size / 2})`}
-            style={{ transition: 'stroke-dashoffset 0.3s ease' }}
-          />
-        </svg>
-      </div>
+      <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+        <CircularProgress
+          variant={determinate ? 'determinate' : 'indeterminate'}
+          value={value}
+          size={size}
+          sx={{ ...sx }}
+          {...props}
+        />
+        {determinate && (
+          <Box
+            sx={{
+              top: 0,
+              left: 0,
+              bottom: 0,
+              right: 0,
+              position: 'absolute',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Typography variant="caption" component="div" color="text.secondary">
+              {`${Math.round(value)}%`}
+            </Typography>
+          </Box>
+        )}
+      </Box>
     );
   }
   
   return (
-    <div
-      style={{
-        width: '100%',
-        height: '4px',
-        backgroundColor: '#e0e0e0',
-        borderRadius: '2px',
-        overflow: 'hidden'
+    <LinearProgress
+      variant={determinate ? 'determinate' : 'indeterminate'}
+      value={value}
+      sx={{
+        borderRadius: 1,
+        height: 8,
+        ...sx,
       }}
-    >
-      <div
-        style={{
-          width: `${value}%`,
-          height: '100%',
-          backgroundColor: theme.primary,
-          transition: 'width 0.3s ease'
-        }}
-      />
-    </div>
+      {...props}
+    />
   );
 };
+
+export default Progress;

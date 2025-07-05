@@ -1,57 +1,58 @@
+import React from 'react';
+import {
+  Table as MuiTable,
+  TableBody,
+  TableCell as MuiTableCell,
+  TableContainer,
+  TableHead,
+  TableRow as MuiTableRow,
+  Paper,
+} from '@mui/material';
 
-const Table = ({ children, style }) => {
-  const { currentTheme } = useContext(ThemeContext);
-  const theme = themeConfigs[currentTheme];
-  
+export const Table = ({ children, sx = {}, ...props }) => {
   return (
-    <div style={{ overflowX: 'auto', ...style }}>
-      <table
-        style={{
-          width: '100%',
-          borderCollapse: 'collapse',
-          backgroundColor: theme.background,
-          color: theme.text
-        }}
-      >
+    <TableContainer component={Paper} sx={{ borderRadius: 2, ...sx }}>
+      <MuiTable {...props}>
         {children}
-      </table>
-    </div>
+      </MuiTable>
+    </TableContainer>
   );
 };
 
-const TableRow = ({ children, isHeader }) => {
-  const { currentTheme } = useContext(ThemeContext);
-  const theme = themeConfigs[currentTheme];
-  
+export const TableHead = ({ children, ...props }) => {
+  return <TableHead {...props}>{children}</TableHead>;
+};
+
+export const TableBody = ({ children, ...props }) => {
+  return <TableBody {...props}>{children}</TableBody>;
+};
+
+export const TableRow = ({ children, sx = {}, ...props }) => {
   return (
-    <tr
-      style={{
-        borderBottom: `1px solid ${theme.mode === 'dark' ? '#333' : '#e0e0e0'}`,
-        backgroundColor: isHeader ? `${theme.primary}10` : 'transparent'
+    <MuiTableRow
+      sx={{
+        '&:last-child td, &:last-child th': { border: 0 },
+        ...sx,
       }}
+      {...props}
     >
       {children}
-    </tr>
+    </MuiTableRow>
   );
 };
 
-const TableCell = ({ children, isHeader, style }) => {
-  const { currentTheme } = useContext(ThemeContext);
-  const theme = themeConfigs[currentTheme];
-  
-  const Tag = isHeader ? 'th' : 'td';
-  
+export const TableCell = ({ children, sx = {}, ...props }) => {
   return (
-    <Tag
-      style={{
-        padding: '12px 16px',
-        textAlign: 'left',
-        fontWeight: isHeader ? '600' : '400',
-        color: theme.text,
-        ...style
+    <MuiTableCell
+      sx={{
+        fontWeight: props.component === 'th' ? 600 : 400,
+        ...sx,
       }}
+      {...props}
     >
       {children}
-    </Tag>
+    </MuiTableCell>
   );
 };
+
+export default Table;

@@ -1,35 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import { ThemeProvider as MuiThemeProvider, CssBaseline, Container } from '@mui/material';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { createCustomTheme } from './themes/createTheme';
+import { useTheme } from './contexts/ThemeContext';
 
-function App() {
-  const [count, setCount] = useState(0)
+// Layout Components
+import Header from './components/layout/Header';
+import Navigation from './components/layout/Navigation';
+
+// Section Components
+import ThemeCustomizer from './components/sections/ThemeCustomizer';
+import ComponentsDoc from './components/sections/ComponentsDoc';
+import InstallationGuide from './components/sections/InstallationGuide';
+
+const AppContent = () => {
+  const [activeTab, setActiveTab] = useState(0);
+  const { getCurrentThemeConfig } = useTheme();
+  
+  const themeConfig = getCurrentThemeConfig();
+  const muiTheme = createCustomTheme(themeConfig);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <MuiThemeProvider theme={muiTheme}>
+      <CssBaseline />
+      <Header />
+      
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
+        
+        {activeTab === 0 && <ThemeCustomizer />}
+        {activeTab === 1 && <ComponentsDoc />}
+        {activeTab === 2 && <InstallationGuide />}
+      </Container>
+    </MuiThemeProvider>
+  );
+};
 
-export default App
+const App = () => {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
+  );
+};
+
+export default App;
